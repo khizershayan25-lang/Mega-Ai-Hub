@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mega AI Hub</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      margin: 0;
+      padding: 6px;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #06080d;
+      color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .mobile-chrome-shell {
+      position: relative;
+      width: 100%;
+      max-width: 430px;
+      min-height: 96vh;
+      background: #0f1117;
+      border: 1px solid #273043;
+      border-radius: 18px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
+      transition: max-width 0.25s ease, border-radius 0.25s ease;
+    }
+    body.screen-desktop-mode .mobile-chrome-shell {
+      max-width: 820px;
+      border-radius: 16px;
+    }
+    body.screen-laptop-mode .mobile-chrome-shell {
+      max-width: 700px;
+    }
+    body.screen-macbook-mode .mobile-chrome-shell {
+      max-width: 740px;
+      border-color: #93c5fd;
+    }
+    body.screen-chrome-mode .mobile-chrome-shell {
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35), 0 14px 36px rgba(0, 0, 0, 0.7);
+    }
+
+    #topEventTimerBox {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(90deg, #172554, #31105f);
+      border: 1px solid #facc15;
+      border-radius: 9px;
+      padding: 5px 9px;
+      margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: bold;
+      color: #fef08a;
+    }
+    #topEventTimerBox.open {
+      display: flex;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      gap: 6px;
+    }
+    .account-corner-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    #accountCornerBtn {
+      padding: 6px 10px;
+      border-radius: 9px;
+      border: 1px solid #38bdf8;
+      background: #162033;
+      color: #e0f2fe;
+      font-size: 11.5px;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #accountCornerBtn.premium-gold {
+      border-color: #facc15;
+      background: linear-gradient(135deg, #422006, #78350f);
+      color: #fef08a;
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.35);
+    }
+    .corner-dropdown {
+      display: none;
+      position: absolute;
+      top: 36px;
+      left: 0;
+      width: 215px;
+      background: #161f33;
+      border: 1px solid #38bdf8;
+      border-radius: 11px;
+      padding: 6px;
+      z-index: 60;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.78);
+      flex-direction: column;
+      gap: 4px;
+    }
+    .corner-dropdown.open {
+      display: flex;
+    }
+    .corner-menu-btn {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: #1e293b;
+      color: #f8fafc;
+      font-size: 12px;
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
+    }
+    .corner-menu-btn:hover {
+      background: #2563eb;
+      border-color: #93c5fd;
+    }
+
+    .title-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+    .title-wrap h3 {
+      margin: 0;
+      font-size: 14.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .title-wrap small {
+      color: #9ca3af;
+      display: block;
+      font-size: 9.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    #newChatTopBtn {
+      padding: 5px 7px;
+      border-radius: 8px;
+      border: 1px solid #38bdf8;
+      background: #0369a1;
+      color: #ffffff;
+      font-size: 10.5px;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .round-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #3b82f6;
+      background: #1d4ed8;
+      color: #ffffff;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .round-btn.muted {
+      border-color: #ef4444;
+      background: #7f1d1d;
+    }
+    #historyArrowBtn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid #4b5563;
+      background: #1f2937;
+      color: #f9fafb;
+      font-size: 15px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .selected-tools-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .strip-chip {
+      padding: 4px 7px;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #172033;
+      color: #bae6fd;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #historyPanel {
+      display: none;
+      background: #161b26;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 8px;
+      margin-bottom: 8px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+    #historyPanel.open {
+      display: block;
+    }
+    .history-item {
+      padding: 7px 9px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      background: #22293a;
+      border: 1px solid #334155;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .history-item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Animated Big Triangle Watermark Overlay for Song Generation & Export */
+    #songTriangleWatermarkOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 970;
+      pointer-events: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5, 8, 16, 0.55);
+    }
+    #songTriangleWatermarkOverlay.active {
+      display: flex;
+    }
+    .big-triangle-box {
+      position: relative;
+      width: 240px;
+      height: 210px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: megaTriangleBobFade 2.2s ease-in-out infinite;
+    }
+    .big-triangle-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.75));
+    }
+    .big-triangle-label {
+      position: absolute;
+      top: 58%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 13px;
+      font-weight: 900;
+      color: #fef08a;
+      text-shadow: 0 2px 10px #000000;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
+    }
+    @keyframes megaTriangleBobFade {
+      0% {
+        opacity: 0.15;
+        transform: translateY(22px) scale(0.95);
+      }
+      50% {
+        opacity: 0.96;
+        transform: translateY(-22px) scale(1.04);
+      }
+      100% {
+        opacity: 0.15;
+        transform: translateY(22px) scale(0.95);
+      }
+    }
+
+    .song-craft-card {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 11px;
+      background: #0c1426;
+      border: 1px solid #38bdf8;
+    }
+    .song-wm-badge {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 4px 8px;
+      border-radius: 7px;
+      background: rgba(250, 204, 21, 0.15);
+      border: 1px dashed #facc15;
+      color: #fef08a;
+      font-size: 11px;
+      font-weight: bold;
+      animation: megaTriangleBobFade 2.6s ease-in-out infinite;
+    }
+    .remove-wm-btn {
+      display: inline-block;
+      margin-top: 8px;
+      margin-left: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #facc15;
+      background: #78350f;
+      color: #fef08a;
+      font-size: 11.5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .overlay-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 15, 0.92);
+      z-index: 990;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+    .overlay-modal.open {
+      display: flex;
+    }
+    .modal-card {
+      width: 100%;
+      max-width: 400px;
+      max-height: 88vh;
+      overflow-y: auto;
+      background: #131a29;
+      border: 1px solid #38bdf8;
+      border-radius: 14px;
+      padding: 14px;
+      color: #f8fafc;
+    }
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .field-label {
+      display: block;
+      font-size: 11.5px;
+      color: #93c5fd;
+      margin: 6px 0 3px;
+      font-weight: bold;
+    }
+    .modal-input {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 9px;
+      border: 1px solid #334155;
+      background: #0b111e;
+      color: #ffffff;
+      font-size: 13px;
+    }
+    .red-alert-box {
+      color: #ef4444;
+      font-size: 12.5px;
+      font-weight: bold;
+      margin-top: 8px;
+      min-height: 18px;
+      white-space: pre-line;
+    }
+    .primary-action-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 9px;
+      border: none;
+      background: #22c55e;
+      color: #052e16;
+      font-weight: bold;
+      font-size: 13.5px;
+      cursor: pointer;
+    }
+    .daily-reward-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 9px;
+      border-radius: 9px;
+      border: 1px solid #facc15;
+      background: #713f12;
+      color: #fef08a;
+      font-weight: bold;
+      font-size: 12.5px;
+      cursor: pointer;
+    }
+    .saved-items-box {
+      margin-top: 10px;
+      background: #0b111e;
+      border: 1px solid #26344d;
+      border-radius: 9px;
+      padding: 8px;
+      font-size: 11.5px;
+      line-height: 1.45;
+      white-space: pre-line;
+    }
+    .lang-list-grid,
+    .art-options-grid,
+    .target-engine-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      max-height: 290px;
+      overflow-y: auto;
+      margin-top: 8px;
+    }
+    .lang-pick-btn,
+    .art-option-btn,
+    .engine-pick-btn {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #f8fafc;
+      font-size: 11.5px;
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
+    }
+    .lang-pick-btn:hover,
+    .art-option-btn:hover,
+    .engine-pick-btn:hover {
+      background: #2563eb;
+      border-color: #93c5fd;
+    }
+    .ratio-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .ratio-btn {
+      flex: 1;
+      padding: 6px;
+      border-radius: 7px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .ratio-btn.active {
+      background: #1d4ed8;
+      border-color: #93c5fd;
+      color: #ffffff;
+    }
+    .sub-plan-card {
+      background: #0b111e;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .sub-plan-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .buy-plan-btn {
+      flex: 1;
+      min-width: 90px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #38bdf8;
+      background: #0369a1;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .buy-discount-btn {
+      flex: 1;
+      min-width: 90px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #22c55e;
+      background: #15803d;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #megaGateModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 15, 0.92);
+      z-index: 985;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+    #megaGateModal.open {
+      display: flex;
+    }
+    .gate-card {
+      width: 100%;
+      max-width: 390px;
+      background: #131a29;
+      border: 1px solid #38bdf8;
+      border-radius: 14px;
+      padding: 16px;
+      color: #f8fafc;
+    }
+    .gate-text {
+      white-space: pre-line;
+      font-size: 13.5px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      color: #e2e8f0;
+    }
+    .gate-check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0b111e;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .gate-check-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: #22c55e;
+      cursor: pointer;
+    }
+    .gate-error {
+      color: #fca5a5;
+      font-size: 12.5px;
+      font-weight: bold;
+      min-height: 18px;
+      margin-bottom: 10px;
+    }
+    .gate-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .gate-cancel-btn {
+      padding: 9px 14px;
+      border-radius: 9px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #f8fafc;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .gate-continue-btn {
+      padding: 9px 16px;
+      border-radius: 9px;
+      border: none;
+      background: #22c55e;
+      color: #052e16;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #megaStudioWorkspace {
+      position: relative;
+      display: none;
+      background: #121722;
+      border: 1px solid #38bdf8;
+      border-radius: 14px;
+      padding: 8px;
+      margin-bottom: 6px;
+    }
+    #megaStudioWorkspace.open {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .studio-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+    }
+    .studio-top-left {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+    }
+    .studio-top-left strong {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #studioFileBtn {
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid #38bdf8;
+      background: #0c4a6e;
+      color: #e0f2fe;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .studio-top-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    #oneTapArenaBtn {
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid #a855f7;
+      background: #581c87;
+      color: #f3e8ff;
+      font-size: 10.5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #playTestStudioBtn {
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid #22c55e;
+      background: #15803d;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #playTestStudioBtn.playing {
+      border-color: #f59e0b;
+      background: #b45309;
+    }
+    #exitStudioBtn {
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid #ef4444;
+      background: #7f1d1d;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #studioFileMenu {
+      display: none;
+      position: absolute;
+      top: 38px;
+      left: 8px;
+      width: 238px;
+      background: #161f33;
+      border: 1px solid #38bdf8;
+      border-radius: 11px;
+      padding: 5px;
+      z-index: 40;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.72);
+    }
+    #studioFileMenu.open {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .file-menu-item {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: #1e293b;
+      color: #f8fafc;
+      font-size: 12px;
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
+    }
+    .file-menu-item:hover {
+      background: #2563eb;
+      border-color: #93c5fd;
+    }
+
+    #readyGamesPanel {
+      display: none;
+      background: #0b1322;
+      border: 1px solid #22c55e;
+      border-radius: 10px;
+      padding: 7px;
+      gap: 5px;
+      flex-direction: column;
+    }
+    #readyGamesPanel.open {
+      display: flex;
+    }
+    .ready-games-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      color: #86efac;
+      font-weight: bold;
+    }
+    .ready-games-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+    .ready-game-btn {
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #172236;
+      color: #f8fafc;
+      font-size: 11px;
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    #meekaHelpBox {
+      display: none;
+      background: #0b1628;
+      border: 1px solid #38bdf8;
+      border-radius: 10px;
+      padding: 7px 8px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: #e2e8f0;
+    }
+    #meekaHelpBox.open {
+      display: block;
+    }
+    .meeka-help-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+      color: #7dd3fc;
+      font-weight: bold;
+      font-size: 11.5px;
+    }
+    .meeka-help-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .meeka-help-chip {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid #38bdf8;
+      background: #172554;
+      color: #e0f2fe;
+      font-size: 10px;
+      cursor: pointer;
+    }
+    .meeka-help-ask-row {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 5px;
+    }
+    #meekaHelpInput {
+      flex: 1;
+      min-width: 0;
+      padding: 5px 8px;
+      border-radius: 7px;
+      border: 1px solid #475569;
+      background: #060a13;
+      color: #ffffff;
+      font-size: 11px;
+    }
+    #meekaHelpAskBtn {
+      padding: 5px 9px;
+      border-radius: 7px;
+      border: none;
+      background: #38bdf8;
+      color: #051322;
+      font-weight: bold;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    #meekaHelpAnswer {
+      background: #111827;
+      border-radius: 7px;
+      padding: 6px 7px;
+      white-space: pre-line;
+      color: #f8fafc;
+    }
+
+    .studio-banner {
+      background: #172554;
+      border: 1px solid #60a5fa;
+      color: #e0f2fe;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 11.5px;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .studio-tools-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .studio-tool-btn {
+      padding: 4px 8px;
+      border-radius: 7px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .studio-tool-btn.active {
+      background: #2563eb;
+      border-color: #93c5fd;
+      color: #ffffff;
+    }
+    .studio-nudge-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+      font-size: 10.5px;
+      color: #cbd5e1;
+    }
+    .nudge-btn {
+      padding: 3px 7px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 10.5px;
+      cursor: pointer;
+    }
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 122px 1fr;
+      gap: 6px;
+    }
+    .explorer-panel {
+      background: #0b101b;
+      border: 1px solid #26334d;
+      border-radius: 9px;
+      padding: 5px;
+      max-height: 245px;
+      overflow-y: auto;
+    }
+    .explorer-title {
+      font-size: 10.5px;
+      font-weight: bold;
+      color: #93c5fd;
+      margin-bottom: 4px;
+    }
+    .explorer-item {
+      padding: 5px 6px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      margin-bottom: 3px;
+      cursor: pointer;
+      background: #131c2e;
+      border: 1px solid transparent;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 3px;
+    }
+    .explorer-item.active {
+      background: #1d4ed8;
+      border-color: #93c5fd;
+      color: #ffffff;
+      font-weight: bold;
+    }
+    .explorer-badge {
+      font-size: 9.5px;
+      background: rgba(15, 23, 42, 0.75);
+      padding: 1px 5px;
+      border-radius: 999px;
+    }
+    .viewport-panel {
+      background: #090d16;
+      border: 1px solid #26334d;
+      border-radius: 9px;
+      padding: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    #studio3DCanvas {
+      width: 100%;
+      height: 126px;
+      border-radius: 7px;
+      background: radial-gradient(circle at top, #1e293b, #070b14 80%);
+      display: block;
+    }
+    .folder-inspector {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 7px;
+      padding: 5px 7px;
+      font-size: 10.5px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      max-height: 64px;
+      overflow-y: auto;
+    }
+    .folder-actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .folder-item-chip {
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: #1e293b;
+      border: 1px solid #38bdf8;
+      color: #e0f2fe;
+      font-size: 10.5px;
+      cursor: pointer;
+    }
+    .folder-item-chip.selected-chip {
+      background: #1d4ed8;
+      border-color: #facc15;
+    }
+    .script-viewer-box {
+      display: none;
+      background: #060a13;
+      border: 1px solid #22c55e;
+      border-radius: 8px;
+      padding: 6px 8px;
+    }
+    .script-viewer-box.open {
+      display: block;
+    }
+    .script-viewer-box pre {
+      margin: 3px 0 0;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 10px;
+      color: #86efac;
+      white-space: pre-wrap;
+      max-height: 76px;
+      overflow-y: auto;
+    }
+    .quick-craft-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .quick-craft-btn {
+      padding: 4px 7px;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #182234;
+      color: #bae6fd;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .studio-prompt-bar {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    #megaStudioInput {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid #38bdf8;
+      background: #090d16;
+      color: #ffffff;
+      font-size: 12.5px;
+    }
+    #megaStudioSendBtn {
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: none;
+      background: #22c55e;
+      color: #052e16;
+      font-weight: bold;
+      font-size: 12.5px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    #chatBox {
+      flex: 1;
+      min-height: 52vh;
+      max-height: 62vh;
+      overflow-y: auto;
+      background: #171a23;
+      border: 1px solid #2b3040;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .msg {
+      margin: 7px 0;
+      padding: 9px 11px;
+      border-radius: 10px;
+      line-height: 1.45;
+      font-size: 13.5px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .user {
+      background: #2563eb;
+      color: #fff;
+      margin-left: 16%;
+    }
+    .bot {
+      background: #232838;
+      color: #f3f4f6;
+      margin-right: 12%;
+      border: 1px solid #32394f;
+    }
+    .bot.angry {
+      background: #3b1116;
+      border-color: #ef4444;
+      color: #fecaca;
+    }
+    .bot.warn {
+      background: #3a2b0d;
+      border-color: #f59e0b;
+      color: #fde68a;
+    }
+
+    .connect-status-strip {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid #38bdf8;
+      font-size: 11px;
+      color: #7dd3fc;
+      font-weight: bold;
+    }
+    .tri-icon {
+      color: #facc15;
+      font-size: 11px;
+    }
+
+    .followup-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+    .followup-chip-btn {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #38bdf8;
+      background: #0f172a;
+      color: #bae6fd;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .code-box-wrap {
+      margin-top: 8px;
+      border: 1px solid #38bdf8;
+      border-radius: 10px;
+      background: #0b1220;
+      overflow: hidden;
+    }
+    .code-top-bar {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 6px;
+      background: #111b30;
+      border-bottom: 1px solid #1e293b;
+    }
+    .copy-copy-btn {
+      padding: 5px 10px;
+      border-radius: 7px;
+      border: 1px solid #38bdf8;
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .save-nobug-btn {
+      padding: 5px 10px;
+      border-radius: 7px;
+      border: 1px solid #22c55e;
+      background: #15803d;
+      color: #ffffff;
+      font-size: 11.5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .save-nobug-btn.saved {
+      background: #166534;
+      border-color: #86efac;
+    }
+    .code-box-wrap pre {
+      margin: 0;
+      padding: 9px 10px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 11.5px;
+      color: #e2e8f0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .typing-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 2px;
+    }
+    .typing-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #60a5fa;
+      display: inline-block;
+      animation: dotBounce 1.1s infinite ease-in-out;
+    }
+    .typing-dots span:nth-child(1) { animation-delay: 0s; }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dotBounce {
+      0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.45;
+      }
+      30% {
+        transform: translateY(-7px);
+        opacity: 1;
+      }
+    }
+
+    #codingLoadingScreen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 11, 20, 0.96);
+      z-index: 980;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+    #codingLoadingScreen.open {
+      display: flex;
+    }
+    #codingStartBtn {
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: 1px solid #22c55e;
+      background: #16a34a;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .school-level-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+    .school-level-btn {
+      padding: 9px;
+      border-radius: 9px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #f8fafc;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: left;
+    }
+    .school-detail-box {
+      background: #0b1220;
+      border: 1px solid #26344d;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .img-card {
+      position: relative;
+      display: inline-block;
+      margin-top: 6px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #4b5563;
+      background: #111827;
+    }
+    .img-card img {
+      display: block;
+      max-width: 245px;
+      max-height: 225px;
+      object-fit: cover;
+      cursor: zoom-in;
+    }
+    .dl-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 11px;
+      border-radius: 8px;
+      background: #16a34a;
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    #zoomModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 16, 0.94);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px;
+    }
+    #zoomModal.open {
+      display: flex;
+    }
+    .zoom-bar {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .zoom-controls {
+      display: flex;
+      gap: 6px;
+    }
+    .zoom-btn {
+      padding: 7px 11px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #fff;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .zoom-stage {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+    }
+    #zoomedImg {
+      max-width: 95%;
+      max-height: 75vh;
+      transition: transform 0.2s ease;
+      transform-origin: center center;
+      border-radius: 8px;
+    }
+
+    #liveTalkScreen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, #172554, #090d16 70%);
+      z-index: 950;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 14px;
+      color: #f8fafc;
+      overflow-y: auto;
+    }
+    #liveTalkScreen.open {
+      display: flex;
+    }
+    .live-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .live-badges {
+      font-size: 11.5px;
+      color: #93c5fd;
+    }
+    .live-center-stage {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px 0;
+    }
+    #alienAnimCanvas {
+      width: 290px;
+      height: 175px;
+      background: transparent;
+    }
+    .live-transcript-box {
+      width: 96%;
+      max-width: 400px;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .live-text-row {
+      width: 96%;
+      max-width: 400px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    #liveVoiceTextInput {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 13px;
+    }
+    #liveSendTextBtn {
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: none;
+      background: #38bdf8;
+      color: #061322;
+      font-weight: bold;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .live-bottom {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding-bottom: 6px;
+    }
+    #liveMicBtn {
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: none;
+      background: #22c55e;
+      color: #052e16;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #liveMicBtn.listening {
+      background: #ef4444;
+      color: #fff;
+    }
+    #liveExitBtn {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid #64748b;
+      background: #1e293b;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .input-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    #plusBtn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #4b5563;
+      background: #252b3b;
+      color: #fff;
+      font-size: 20px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .plus-menu {
+      display: none;
+      position: absolute;
+      bottom: 46px;
+      left: 0;
+      background: #1f2433;
+      border: 1px solid #3b4258;
+      border-radius: 10px;
+      padding: 5px;
+      z-index: 20;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+    }
+    .plus-menu.open {
+      display: block;
+    }
+    .plus-menu button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: #f3f4f6;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .plus-menu button:hover {
+      background: #2d354b;
+    }
+    #promptInput {
+      flex: 1;
+      min-width: 0;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #1f2433;
+      color: #fff;
+      font-size: 14px;
+    }
+    #micBtn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #4b5563;
+      background: #252b3b;
+      color: #fff;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      user-select: none;
+      touch-action: none;
+    }
+    #micBtn.recording {
+      background: #dc2626;
+      border-color: #f87171;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    #sendBtn {
+      padding: 10px 13px;
+      border-radius: 10px;
+      border: none;
+      background: #22c55e;
+      color: #09130c;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Big Animated Triangle Watermark During Song Generation & Export -->
+  <div id="songTriangleWatermarkOverlay" aria-hidden="true">
+    <div class="big-triangle-box">
+      <svg class="big-triangle-svg" viewBox="0 0 240 210">
+        <polygon
+          points="120,14 226,194 14,194"
+          fill="rgba(23, 37, 84, 0.72)"
+          stroke="#38bdf8"
+          stroke-width="6"
+        />
+      </svg>
+      <span class="big-triangle-label">MEGA AI 3D SONG</span>
+    </div>
+  </div>
+
+  <div class="mobile-chrome-shell">
+    <div id="topEventTimerBox">
+      <span id="topEventTimerLabel">⏳ Event: 30:00</span>
+      <span id="topEventRewardHint">Win ₹1–₹50</span>
+    </div>
+
+    <div class="header">
+      <div class="account-corner-wrap">
+        <button id="accountCornerBtn" type="button">👤 Account</button>
+
+        <div id="accountCornerMenu" class="corner-dropdown">
+          <button class="corner-menu-btn" id="singleAccountActionBtn" type="button">Create Account</button>
+        </div>
+
+        <div id="chatGoMenu" class="corner-dropdown">
+          <button class="corner-menu-btn" id="goLanguageBtn" type="button">1. Language</button>
+          <button class="corner-menu-btn" id="goProfileBtn" type="button">2. Profile</button>
+          <button class="corner-menu-btn" id="goSubscriptionBtn" type="button">3. Subscription</button>
+        </div>
+      </div>
+
+      <div class="title-wrap">
+        <h3>Mega AI Hub</h3>
+        <small id="langStatus">Mega Chat | Mood: HANGOUT | Standard</small>
+        <small id="statsStatus">Guest | Bal: ₹0 | Lang: English</small>
+      </div>
+
+      <div class="header-actions">
+        <button id="newChatTopBtn" type="button" title="Start New Chat">+ New</button>
+        <button id="audioToggleBtn" class="round-btn" title="Mute / Speak">🔊</button>
+        <button id="historyArrowBtn" title="Saved Chats">←</button>
+      </div>
+    </div>
+
+    <div class="selected-tools-strip">
+      <button class="strip-chip active" id="moodCycleBtn" type="button">😎 Mood: Hangout</button>
+      <button class="strip-chip" id="ideaMixerBtn" type="button">🎲 Idea Mixer</button>
+      <button class="strip-chip" id="memeMakerBtn" type="button">💬 Quick Dialog</button>
+      <button class="strip-chip" id="sceneStarterBtn" type="button">🎬 Scene Starter</button>
+    </div>
+
+    <div id="historyPanel"></div>
+
+    <!-- Compact 3D Studio / Roblox Studio Lite Workspace -->
+    <div id="megaStudioWorkspace">
+      <div class="studio-topbar">
+        <div class="studio-top-left">
+          <button id="studioFileBtn" type="button">📁 File</button>
+          <strong id="studioWorkspaceTitle">Mega Forge</strong>
+        </div>
+        <div class="studio-top-right">
+          <button id="oneTapArenaBtn" type="button">⚡ Test Arena</button>
+          <button id="playTestStudioBtn" type="button">▶ Play</button>
+          <button id="exitStudioBtn" type="button">✕ Exit</button>
+        </div>
+      </div>
+
+      <div id="studioFileMenu">
+        <button class="file-menu-item" id="fileReadyGamesBtn" type="button">1. Ready to Make Games</button>
+        <button class="file-menu-item" id="fileDownloadGameBtn" type="button">2. Download the Game File</button>
+        <button class="file-menu-item" id="fileSaveLoadBtn" type="button">3. Save and Load</button>
+        <button class="file-menu-item" id="fileHelpsBtn" type="button">4. Helps (Meeka)</button>
+      </div>
+
+      <div id="readyGamesPanel">
+        <div class="ready-games-header">
+          <span>Ready to Make Games (Roblox Style)</span>
+          <button class="nudge-btn" id="closeReadyGamesBtn" type="button">✕</button>
+        </div>
+        <div class="ready-games-grid">
+          <button class="ready-game-btn" type="button" data-template="simulator">⚡ Simulator</button>
+          <button class="ready-game-btn" type="button" data-template="tycoon">🏭 Tycoon</button>
+          <button class="ready-game-btn" type="button" data-template="marne">⚔️ Marne Wala (Combat)</button>
+          <button class="ready-game-btn" type="button" data-template="murder">🔍 Qatil ko Dhundne</button>
+          <button class="ready-game-btn" type="button" data-template="hide_seek" style="grid-column: span 2;">🙈 Chupan Chupai (Hide &amp; Seek)</button>
+        </div>
+      </div>
+
+      <div id="meekaHelpBox">
+        <div class="meeka-help-top">
+          <span>Meeka Help</span>
+          <button class="nudge-btn" id="closeMeekaHelpBtn" type="button">✕</button>
+        </div>
+        <div class="meeka-help-chips">
+          <button class="meeka-help-chip" type="button" data-q="how to run">Isko kaise chalana hai?</button>
+          <button class="meeka-help-chip" type="button" data-q="what is this">Ye kya hota hai?</button>
+          <button class="meeka-help-chip" type="button" data-q="how to play">Hum isko kaise khele hain?</button>
+        </div>
+        <div class="meeka-help-ask-row">
+          <input id="meekaHelpInput" type="text" placeholder="Choti si baat pucho..." />
+          <button id="meekaHelpAskBtn" type="button">Ask</button>
+        </div>
+        <div id="meekaHelpAnswer">Meeka: Yahan se choti si baat pucho ke isko kaise chalana hai, ye kya hota hai ya kaise khelte hain.</div>
+      </div>
+
+      <div id="studioStatusBanner" class="studio-banner">
+        Ready in Studio. Tap Test Arena, File, or build below.
+      </div>
+
+      <div class="studio-tools-bar">
+        <button class="studio-tool-btn active" data-tool="select" type="button">⌖ Select</button>
+        <button class="studio-tool-btn" data-tool="move" type="button">✥ Move</button>
+        <button class="studio-tool-btn" data-tool="rotate" type="button">↻ Rotate</button>
+        <button class="studio-tool-btn" data-tool="size" type="button">⤢ Size</button>
+      </div>
+
+      <div class="studio-nudge-bar">
+        <span>Object:</span>
+        <button class="nudge-btn" id="objLeftBtn" type="button">←</button>
+        <button class="nudge-btn" id="objRightBtn" type="button">→</button>
+        <button class="nudge-btn" id="objUpBtn" type="button">↑</button>
+        <button class="nudge-btn" id="objDownBtn" type="button">↓</button>
+        <span style="margin-left:3px;">Cam:</span>
+        <button class="nudge-btn" id="camFwdBtn" type="button">Fwd</button>
+        <button class="nudge-btn" id="camBackBtn" type="button">Back</button>
+      </div>
+
+      <div class="studio-grid">
+        <div class="explorer-panel">
+          <div class="explorer-title">Explorer</div>
+          <div class="explorer-item active" data-folder="ServiceScriptService">
+            <span>ServiceScriptService</span>
+            <span class="explorer-badge" id="badge-ServiceScriptService">0</span>
+          </div>
+          <div class="explorer-item" data-folder="Sounds">
+            <span>Sounds</span>
+            <span class="explorer-badge" id="badge-Sounds">0</span>
+          </div>
+          <div class="explorer-item" data-folder="Workspace">
+            <span>Workspace</span>
+            <span class="explorer-badge" id="badge-Workspace">0</span>
+          </div>
+          <div class="explorer-item" data-folder="Storage">
+            <span>Storage</span>
+            <span class="explorer-badge" id="badge-Storage">0</span>
+          </div>
+          <div class="explorer-item" data-folder="Teams">
+            <span>Teams</span>
+            <span class="explorer-badge" id="badge-Teams">0</span>
+          </div>
+          <div class="explorer-item" data-folder="GUI">
+            <span>GUI</span>
+            <span class="explorer-badge" id="badge-GUI">0</span>
+          </div>
+          <div class="explorer-item" data-folder="Playersbody">
+            <span>Playersbody</span>
+            <span class="explorer-badge" id="badge-Playersbody">0</span>
+          </div>
+          <div class="explorer-item" data-folder="Animation">
+            <span>Animation</span>
+            <span class="explorer-badge" id="badge-Animation">0</span>
+          </div>
+        </div>
+
+        <div class="viewport-panel">
+          <canvas id="studio3DCanvas" width="260" height="126"></canvas>
+          <div id="studioFolderInspector" class="folder-inspector">Select any folder to inspect items &amp; scripts.</div>
+          <div id="studioFolderChips" class="folder-actions-row"></div>
+          <div id="studioScriptViewer" class="script-viewer-box">
+            <strong id="studioScriptTitle" style="font-size:10.5px;color:#86efac;">Script Viewer</strong>
+            <pre id="studioScriptCode"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-craft-row">
+        <button class="quick-craft-btn" type="button" data-quick="make a 3d car">+ Car</button>
+        <button class="quick-craft-btn" type="button" data-quick="spin car round">+ Spin</button>
+        <button class="quick-craft-btn" type="button" data-quick="add script">+ Script</button>
+        <button class="quick-craft-btn" type="button" data-quick="add coin gui">+ Coin GUI</button>
+        <button class="quick-craft-btn" type="button" data-quick="add part gui">+ Part GUI</button>
+        <button class="quick-craft-btn" type="button" data-quick="add item to storage">+ Storage</button>
+      </div>
+
+      <div class="studio-prompt-bar">
+        <input id="megaStudioInput" type="text" placeholder="Mega type here to make anything" />
+        <button id="megaStudioSendBtn" type="button">Build</button>
+      </div>
+    </div>
+
+    <div id="chatBox"></div>
+
+    <div id="normalInputRow" class="input-row">
+      <button id="plusBtn" title="More options">+</button>
+      <div id="plusMenu" class="plus-menu">
+        <button id="imagePhotoOption" type="button">🖼️ Image in Photo (3D Only)</button>
+        <button id="craftImageOption" type="button">🎨 Mega Art Lab (3D Only)</button>
+        <button id="craftSongOption" type="button">🎵 Craft Song (1–2 Min)</button>
+        <button id="liveTalkOption" type="button">👽 Live Talk with AI</button>
+        <button id="codingForGamesOption" type="button">💻 Mega Scriptor</button>
+        <button id="robloxLiteOptionBtn" type="button">🎮 Roblox Studio Lite</button>
+        <button id="schoolOptionBtn" type="button">🎓 School &amp; University</button>
+        <button id="createInMegaAiOption" type="button">🧱 Create with AI (3D)</button>
+      </div>
+      <input id="photoFileInput" type="file" accept="image/*" capture="environment" style="display: none;" />
+      <input id="promptInput" type="text" placeholder="Mega Chat — hangout with your buddy..." />
+      <button id="micBtn" title="Hold to Speak">🎤</button>
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <!-- Craft Song Modal (1 to 2 Min + Listen Player + Prompt-Driven Style) -->
+  <div id="craftSongModal" class="overlay-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <strong>🎵 Craft Song (1–2 Min)</strong>
+        <button id="closeCraftSongBtn" class="zoom-btn" type="button">✕</button>
+      </div>
+      <label class="field-label">Song Length (1 to 2 Minutes)</label>
+      <select id="songDurationSelect" class="modal-input">
+        <option value="60">1 Minute (60s)</option>
+        <option value="90" selected>1.5 Minutes (90s)</option>
+        <option value="120">2 Minutes (120s)</option>
+      </select>
+
+      <label class="field-label">Song Style / Vibe (Jaisa Player Bole)</label>
+      <input id="songThemeInput" class="modal-input" type="text" placeholder="e.g. Fast drift beat, calm night synth, hero theme..." />
+      <button id="generateCraftSongBtn" class="primary-action-btn" type="button">🎵 Craft 1–2 Min Song &amp; Play</button>
+    </div>
+  </div>
+
+  <!-- Scriptor Target / Engine Picker Modal -->
+  <div id="scriptorTargetModal" class="overlay-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <strong>Aapko Script Kis Mein Chahiye?</strong>
+        <button id="closeScriptorTargetBtn" class="zoom-btn" type="button">✕</button>
+      </div>
+      <div style="font-size:12px;color:#cbd5e1;margin-bottom:6px;">
+        Apna engine / game crafter chuno. Script 30s–60s research (YouTube / Chrome / AI) + 3-step check ke baad banega.
+      </div>
+      <div id="scriptorEngineGrid" class="target-engine-grid">
+        <button class="engine-pick-btn" type="button" data-engine="Roblox (Luau)">🎮 Roblox (Luau)</button>
+        <button class="engine-pick-btn" type="button" data-engine="Unity (C#)">⚙️ Unity (C#)</button>
+        <button class="engine-pick-btn" type="button" data-engine="Godot (GDScript)">🤖 Godot (GDScript)</button>
+        <button class="engine-pick-btn" type="button" data-engine="Unreal (C++ Blueprint)">🛡️ Unreal (C++)</button>
+        <button class="engine-pick-btn" type="button" data-engine="Construct / GDevelop">🧩 Game Crafter (2D)</button>
+        <button class="engine-pick-btn" type="button" data-engine="Web Game (JS)">🌐 Web Game (JS)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10 Image Options Modal (3D Only) -->
+  <div id="artLabOptionsModal" class="overlay-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <strong>Mega Art Lab — 3D Only Mode</strong>
+        <button id="closeArtOptionsBtn" class="zoom-btn" type="button">✕</button>
+      </div>
+
+      <div class="ratio-row">
+        <button class="ratio-btn active" type="button" data-ratio="16:9">16:9 Wide (3D)</button>
+        <button class="ratio-btn" type="button" data-ratio="1:1">1:1 Square (3D)</button>
+        <button class="ratio-btn" type="button" data-ratio="9:16">9:16 Tall (3D)</button>
+      </div>
+
+      <div id="artTenOptionsGrid" class="art-options-grid">
+        <button class="art-option-btn" type="button" data-art="neon_street">1. Neon Street (3D)</button>
+        <button class="art-option-btn" type="button" data-art="sky_island">2. Sky Island (3D)</button>
+        <button class="art-option-btn" type="button" data-art="lava_castle">3. Lava Castle (3D)</button>
+        <button class="art-option-btn" type="button" data-art="cozy_room">4. Cozy Room (3D)</button>
+        <button class="art-option-btn" type="button" data-art="anime_action">5. Anime Action (3D)</button>
+        <button class="art-option-btn" type="button" data-art="phone">6. 3D Phone</button>
+        <button class="art-option-btn" type="button" data-art="car">7. 3D Car</button>
+        <button class="art-option-btn" type="button" data-art="house">8. 3D House</button>
+        <button class="art-option-btn" type="button" data-art="cyber_city">9. Cyber City (3D)</button>
+        <button class="art-option-btn" type="button" data-art="space_station">10. Space Station (3D)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Create / Login Modal -->
+  <div id="accountAuthModal" class="overlay-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <strong id="authModalTitle">Account</strong>
+        <button id="closeAuthModalBtn" class="zoom-btn" type="button">✕ Close</button>
+      </div>
+
+      <div id="createAccountPane">
+        <label class="field-label">Your Name</label>
+        <input id="regNameInput" class="modal-input" type="text" placeholder="Enter your name" />
+
+        <label class="field-label">Date of Birth (Must be 10+ years old)</label>
+        <input id="regDobInput" class="modal-input" type="date" />
+
+        <label class="field-label">Username / Email</label>
+        <input id="regUserInput" class="modal-input" type="text" placeholder="Enter username or email" />
+
+        <label class="field-label">Set Strong Password</label>
+        <input id="regPassInput" class="modal-input" type="password" placeholder="Letters + Numbers + Symbol (8+ chars)" />
+
+        <div id="regErrorBox" class="red-alert-box"></div>
+        <button id="createAccountSubmitBtn" class="primary-action-btn" type="button">Create Account</button>
+      </div>
+
+      <div id="loginAccountPane" style="display:none;">
+        <label class="field-label">Name or Username</label>
+        <input id="loginNameInput" class="modal-input" type="text" placeholder="Enter your account name" />
+
+        <label class="field-label">Password</label>
+        <input id="loginPassInput" class="modal-input" type="password" placeholder="Enter your password" />
+
+        <div id="loginErrorBox" class="red-alert-box"></div>
+        <button id="loginAccountSubmitBtn" class="primary-action-btn" type="button">Login &amp; Open Chat</button>
+
+        <div id="loginSavedItemsBox" class="saved-items-box"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language Picker Modal -->
+  <div id="languagePickerModal" class="overlay-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <strong>Language</strong>
+        <button id="closeLangModalBtn" class="zoom-btn" type="button">✕</button>
+      </div>
+      <div id="languageOptionsGrid" class="lang-list-grid"></div>
+    </div>
+  </div>
+
+  <!-- Profile Modal with 24h Daily Reward (+10 Max) -->
+  <div id="profileInfoModal" class="overlay-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <strong>Profile</strong>
+        <button id="closeProfileModalBtn" class="zoom-btn" type="button">✕</button>
+      </div>
+      <div id="profileSummaryBox" class="saved-items-box"></div>
+      <button id="dailyRewardClaimBtn" class="daily-reward-btn" type="button">🎁 Daily Reward (+10 / 24h)</button>
+      <div id="dailyRewardMsg" style="font-size:11.5px;color:#fde68a;margin-top:6px;"></div>
+      <div id="profileChatListBox" class="saved-items-box" style="max-height:160px;overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <!-- Subscription Modal -->
+  <div id="subscriptionModal" class="overlay-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <strong>Subscription</strong>
+        <button id="closeSubModalBtn" class="zoom-btn" type="button">✕</button>
+      </div>
+
+      <div id="subCurrentBalanceText" style="font-size:12.5px;font-weight:bold;color:#86efac;margin-bottom:4px;">
+        Balance: ₹0
+      </div>
+      <div id="subDiscountBannerText" style="font-size:11.5px;font-weight:bold;color:#fde047;margin-bottom:8px;">
+        24h Discount: 50% (Resets every 24h)
+      </div>
+
+      <div class="sub-plan-card">
+        <strong>Regular Plans</strong>
+        <div class="sub-plan-row">
+          <button id="regDayPlanBtn" class="buy-plan-btn" type="button" data-base-plan="Day" data-days="1" data-base-cost="30">Day — 30</button>
+          <button id="regMonthPlanBtn" class="buy-plan-btn" type="button" data-base-plan="Monthly" data-days="30" data-base-cost="60">Monthly — 60</button>
+          <button id="regYearPlanBtn" class="buy-plan-btn" type="button" data-base-plan="Yearly" data-days="365" data-base-cost="120">Year — 120</button>
+        </div>
+      </div>
+
+      <div class="sub-plan-card" style="border-color:#22c55e;">
+        <strong id="discountCardHeading" style="color:#86efac;">Discount For Yours (50% Off)</strong>
+        <div class="sub-plan-row">
+          <button id="discDayPlanBtn" class="buy-discount-btn" type="button" data-base-plan="Day" data-days="1" data-base-cost="30">Day — 15</button>
+          <button id="discMonthPlanBtn" class="buy-discount-btn" type="button" data-base-plan="Monthly" data-days="30" data-base-cost="60">Monthly — 30</button>
+          <button id="discYearPlanBtn" class="buy-discount-btn" type="button" data-base-plan="Yearly" data-days="365" data-base-cost="120">Year — 60</button>
+        </div>
+      </div>
+
+      <div id="subStatusMessage" class="red-alert-box"></div>
+    </div>
+  </div>
+
+  <!-- Gate Modal -->
+  <div id="megaGateModal">
+    <div class="gate-card">
+      <div id="gateStepText" class="gate-text"></div>
+      <label class="gate-check-row" id="gateCheckLabel">
+        <input type="checkbox" id="gateCheckbox" />
+        <span id="gateCheckText">Accept</span>
+      </label>
+      <div id="gateErrorText" class="gate-error"></div>
+      <div class="gate-actions">
+        <button id="gateCancelBtn" class="gate-cancel-btn" type="button">Cancel</button>
+        <button id="gateContinueBtn" class="gate-continue-btn" type="button">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- School & University Modal -->
+  <div id="schoolModal" class="overlay-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <strong>School &amp; University</strong>
+        <button id="closeSchoolModalBtn" class="zoom-btn" type="button">✕</button>
+      </div>
+      <div class="school-level-list">
+        <button class="school-level-btn" data-level="c1_5" type="button">Class 1 – 5</button>
+        <button class="school-level-btn" data-level="c6_8" type="button">Class 6 – 8</button>
+        <button class="school-level-btn" data-level="c9_10" type="button">Class 9 – 10</button>
+        <button class="school-level-btn" data-level="c11_12" type="button">Class 11 – 12</button>
+        <button class="school-level-btn" data-level="uni" type="button">University</button>
+      </div>
+      <div id="schoolDetailBox" class="school-detail-box">
+Select any level from Class 1 to University above.
+      </div>
+    </div>
+  </div>
+
+  <div id="codingLoadingScreen">
+    <div class="typing-dots"><span></span><span></span><span></span></div>
+    <div id="codingLoadingLabel" style="font-size: 15px; font-weight: bold; color: #e2e8f0;">
+      Press "Coding Start" to craft with Meeka &amp; Mega Scriptor.
+    </div>
+    <button id="codingStartBtn" type="button">▶ Coding Start</button>
+  </div>
+
+  <div id="zoomModal">
+    <div class="zoom-bar">
+      <div class="zoom-controls">
+        <button id="zoomInBtn" class="zoom-btn" type="button">Zoom +</button>
+        <button id="zoomOutBtn" class="zoom-btn" type="button">Zoom -</button>
+        <button id="zoomResetBtn" class="zoom-btn" type="button">Reset</button>
+      </div>
+      <button id="zoomCloseBtn" class="zoom-btn" type="button">✕ Back</button>
+    </div>
+    <div class="zoom-stage">
+      <img id="zoomedImg" src="" alt="Zoomed Image" />
+    </div>
+  </div>
+
+  <div id="liveTalkScreen">
+    <div class="live-top">
+      <div>
+        <strong>Live Talk with AI</strong>
+        <div id="liveSubStatus" class="live-badges">Mood Shift + Challenge + Roleplay Active</div>
+      </div>
+      <button id="liveExitBtn" type="button">✕ Exit</button>
+    </div>
+
+    <div class="live-center-stage">
+      <canvas id="alienAnimCanvas" width="290" height="175"></canvas>
+      <div id="liveStatusText" class="live-transcript-box">
+        Tap "Speak Now" to record your voice. Your spoken text also appears below so you can see and send it.
+      </div>
+      <div class="live-text-row">
+        <input id="liveVoiceTextInput" type="text" placeholder="Spoken / typed text appears here..." />
+        <button id="liveSendTextBtn" type="button">Send</button>
+      </div>
+    </div>
+
+    <div class="live-bottom">
+      <button id="liveMicBtn" type="button">🎤 Speak Now</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
